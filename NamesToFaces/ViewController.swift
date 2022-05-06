@@ -44,7 +44,18 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         picker.allowsEditing = true
         picker.delegate = self
         
-        present(picker, animated: true)
+        let ac = UIAlertController(title: "Choose an option", message: nil, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "Take a photo", style: .default){[weak self] _ in
+            if UIImagePickerController.isSourceTypeAvailable(.camera){
+                picker.sourceType = .camera
+            }
+            self?.present(picker, animated: true)
+        })
+        ac.addAction(UIAlertAction(title: "From Camera Roll", style: .default){[weak self] _ in
+            self?.present(picker, animated: true)
+        })
+        present(ac, animated: true)
+        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -70,7 +81,19 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let person = people[indexPath.item]
+        let ac = UIAlertController(title: "CHoose an action", message: nil, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "Rename", style: .default){ [weak self] _ in
+            self?.rename(index: indexPath.item)
+        })
+        ac.addAction(UIAlertAction(title: "Delete", style: .destructive){[weak self] _ in
+            self?.people.remove(at: indexPath.item)
+            self?.collectionView.reloadData()
+        })
+        present(ac, animated: true)
+    }
+    
+    func rename(index: Int){
+        let person = people[index]
         
         let ac = UIAlertController(title: "Rename Person", message: nil, preferredStyle: .alert)
         
